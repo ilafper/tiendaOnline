@@ -25,19 +25,49 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["usuario_id"] = (string) $encontrado["_id"];  // Convertir el ObjectId a string
             $_SESSION["usuario_nombre"] = $encontrado["nombre"];
             $_SESSION["rol"] = $encontrado["rol"];
-            header("location:../html/index.html");
         } else {
             header("location:../html/login.html");
+            exit;
         }
-        exit;
     } catch (Exception $error) {
         http_response_code(500);
         echo "Error del servidor: " . $error->getMessage();
         exit;
     }
+}
+
+// Si el usuario ha iniciado sesión, mostrar el contenido de index.html con datos dinámicos
+if (isset($_SESSION["usuario_id"])) {
+    $usuario_nombre = $_SESSION["usuario_nombre"];
+    $rol = $_SESSION["rol"];
+    ?>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kanban - Bienvenido</title>
+        <link rel="stylesheet" href="../css/estilos.css">
+    </head>
+    <body>
+        <header>
+            <h1>Bienvenido, <?php echo htmlspecialchars($usuario_nombre); ?>!</h1>
+            <a href="logout.php">Cerrar sesión</a>
+        </header>
+
+        <main>
+            <h2>Tu tablero Kanban</h2>
+            <!-- Aquí puedes incluir el contenido de tu index.html -->
+            <div id="kanban-container">
+                <p>Aquí irá el tablero de tareas...</p>
+            </div>
+        </main>
+    </body>
+    </html>
+    <?php
+
 } else {
     header("location:../html/login.html");
     exit;
 }
-
 ?>
