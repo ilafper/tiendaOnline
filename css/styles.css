@@ -111,7 +111,7 @@ body{
     justify-content: center;
 }
 
-.compra{
+.añadir{
     width: 90%;
     border: none;
     background-color: #002780;
@@ -121,7 +121,7 @@ body{
     font-weight: bold;
 }
 
-.compra:hover{
+.añadir:hover{
     transform: scale(1.01);
     background-color: rgba(0, 0, 0, 0.884);
 }
@@ -255,7 +255,10 @@ footer .redes a:hover {
     align-items: center;
     border: 1px solid #ccc;
     padding: 5px 8px;
+    width: 50%;
 }
+
+
 
 .canti i {
     font-size: 16px;
@@ -264,8 +267,16 @@ footer .redes a:hover {
     
 }
 
-.canti p {
+
+.canti input {
+    width: 50px;
+    padding: 5px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
     margin: 0 5px;
+    outline: none;
 }
 
 /* Ícono de eliminar */

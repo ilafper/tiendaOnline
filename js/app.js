@@ -1,17 +1,17 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Función para cargar los productos
     function cargarProductos() {
         $.ajax({
             url: '../php/cargarProductos.php', // Ruta al archivo PHP
             method: 'GET',
             dataType: 'json', // Esperamos respuesta en formato JSON
-            success: function(data) {
+            success: function (data) {
                 if (data.success) {
                     const productosWrap = $('.ProductosWrap'); // Contenedor donde se mostrarán los productos
                     productosWrap.empty(); // Limpiar el contenido previo
 
                     // Recorrer los productos y mostrarlos
-                    data.productos.forEach(function(producto) {
+                    data.productos.forEach(function (producto) {
                         const productoHTML = `
                             <section class="card">
                                 <div class="targ-img">
@@ -23,133 +23,90 @@ $(document).ready(function() {
                                     <p class="precio">${producto.precio}€</p>
                                 </div>
                                 <div class="button">
-                                    <button class="compra">BUY</button>
+                                    <button class="añadir">AÑADIR CARRITO</button>
                                 </div>
                             </section>
                         `;
                         productosWrap.append(productoHTML); // Agregar al contenedor
                     });
+
                 } else {
                     alert('Error al cargar los productos: ' + data.error);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Error en la solicitud AJAX:', error);
                 alert('Hubo un problema con la solicitud');
             }
         });
     }
 
-    // Llamamos a la función para cargar los productos cuando la página esté lista
     cargarProductos();
 
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-    // Función para actualizar la vista del carrito
-    function actualizarCarrito() {
-        let carritoLista = $(".listaCarrito");
-        let totalCarrito = $(".upup p");
-        carritoLista.empty();
-
-        let total = 0;
-
-        carrito.forEach((producto, index) => {
-            total += producto.precio * producto.cantidad;
-
-            let item = $(`
-                <section class="conjun">
-                    <section class="rigth">
-                        <img src="${producto.imagen}" alt="${producto.nombre}">
+    $(document).ready(function () {
+        $(document).on("click", ".añadir", function () {
+            // Obtener el contenedor del producto
+            let card = $(this).closest(".card");
+    
+            // Extraer la información del producto
+            let nombre = card.find("h5").text();
+            let precio = card.find(".precio").text();
+            let imgSrc = card.find("img").attr("src");
+            const listaCarrito = $('.listaCarrito');
+            // Definir cantidad inicial
+            let cantidad = 1;
+        
+            // Crear el HTML del producto en el carrito
+            let itemCarrito = `
+            <section class="item-carrito d-flex">
+                <section class="rigth">
+                    <img src="${imgSrc}" alt="${nombre}" width="50">
+                </section>
+                <section class="left d-flex flex-column w-100">
+                    <section class="arriba">
+                        <p>${nombre}</p>
+                        <p>${precio}</p>
                     </section>
-                    <section class="left">
-                        <section class="arriba">
-                            <p>${producto.nombre}</p>
-                            <p>${producto.precio.toFixed(2)}€</p>
+                    <section class="abajo d-flex align-items-center gap-2">
+                        <section class="canti d-flex align-items-center gap-2">
+                            <i class='bx bx-minus'></i>
+                            <input type="number" class="cantidad-input" value="1" min="1">
+                            <i class='bx bx-plus'></i>
                         </section>
-                        <section class="abajo">
-                            <section class="canti">
-                                <i class='bx bx-minus' data-index="${index}"></i>
-                                <p>${producto.cantidad}</p>
-                                <i class='bx bx-plus' data-index="${index}"></i>
-                            </section>
-                            <section class="trash">
-                                <i class='bx bx-trash' data-index="${index}"></i>
-                            </section>
+                        <section class="trash">
+                            <i class='bx bx-trash'></i>
                         </section>
                     </section>
                 </section>
-            `);
-
-            carritoLista.append(item);
+            </section>
+            `;
+        
+            // Agregar el producto al carrito
+            listaCarrito.append(itemCarrito);
         });
-
-        totalCarrito.text(`${total.toFixed(2)}€`);
-        agregarEventosCarrito();
-    }
-
-    // Función para agregar productos al carrito
-    function agregarAlCarrito(producto) {
-        let existe = carrito.find(item => item.id === producto.id);
-
-        if (existe) {
-            existe.cantidad++;
-        } else {
-            carrito.push({ ...producto, cantidad: 1 });
-        }
-
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-        actualizarCarrito();
-    }
-
-    // Eventos para modificar cantidades o eliminar productos
-    function agregarEventosCarrito() {
-        $(".bx-plus").click(function () {
-            let index = $(this).data("index");
-            carrito[index].cantidad++;
-            localStorage.setItem("carrito", JSON.stringify(carrito));
-            actualizarCarrito();
+        
+        // Aumentar o disminuir la cantidad cuando se haga clic en los botones de +/- 
+        $(document).on("click", ".bx-plus", function () {
+            let cantidad = $(this).siblings("p.cantidad");
+            let cantidadVal = parseInt(cantidad.text());
+            cantidad.text(cantidadVal + 1); // Incrementa la cantidad
         });
-
-        $(".bx-minus").click(function () {
-            let index = $(this).data("index");
-            if (carrito[index].cantidad > 1) {
-                carrito[index].cantidad--;
-            } else {
-                carrito.splice(index, 1);
+        
+        $(document).on("click", ".bx-minus", function () {
+            let cantidad = $(this).siblings("p.cantidad");
+            let cantidadVal = parseInt(cantidad.text());
+            if (cantidadVal > 1) { // No permitir que la cantidad sea menor a 1
+                cantidad.text(cantidadVal - 1); // Decrementa la cantidad
             }
-            localStorage.setItem("carrito", JSON.stringify(carrito));
-            actualizarCarrito();
         });
-
-        $(".bx-trash").click(function () {
-            let index = $(this).data("index");
-            carrito.splice(index, 1);
-            localStorage.setItem("carrito", JSON.stringify(carrito));
-            actualizarCarrito();
+        
+        // Eliminar producto del carrito
+        $(document).on("click", ".bx-trash", function () {
+            $(this).closest(".item-carrito").remove(); // Elimina el producto
         });
-    }
-
-    // Capturar los clics en los botones "BUY"
-    $(".compra").click(function () {
-        let tarjeta = $(this).closest(".card");
-
-        let producto = {
-            id: tarjeta.data("id"),
-            nombre: tarjeta.find("h5").text(),
-            descripcion: tarjeta.find(".descripcion").text(),
-            precio: parseFloat(tarjeta.find(".precio").text()),
-            imagen: tarjeta.find("img").attr("src")
-        };
-
-        agregarAlCarrito(producto);
-        console.log(producto);
         
     });
-    
-    
-    // Cargar el carrito al inicio
-    actualizarCarrito();
-
 
 
 
