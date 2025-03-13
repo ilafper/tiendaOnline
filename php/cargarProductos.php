@@ -22,15 +22,16 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         // Obtener todos los productos (puedes agregar filtros si es necesario)
         $productos = $productosCollection->find();
-
+ 
         // Convertir el cursor a un array con los datos necesarios
         $productosArray = [];
         foreach ($productos as $producto) {
             $productosArray[] = [
-                "id" => (string) $producto["_id"], // Convertir el ObjectId a string
+                "codigo"=> $producto["codigo"],
                 "nombre" => $producto["nombre"],
                 "descripcion" => $producto["descripcion"],
-                "precio" => $producto["precio"]
+                "precio" => intval($producto["precio"]),
+                "stok" => intval($producto["cantidad_stock"]),
             ];
         }
 

@@ -2,11 +2,6 @@
 session_start();
 require('../vendor/autoload.php');
 
-// Inicializar carrito si no existe
-if (!isset($_SESSION['carrito'])) {
-    $_SESSION['carrito'] = [];
-}
-
 // Manejo del formulario de login
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $usuario = $_POST["username"] ?? null;
@@ -27,16 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $encontrado = $collection->findOne(["nombre" => $usuario]);
 
         if ($encontrado && $contra === $encontrado["password"]) {
-            // Guardar el ID del usuario en la sesión
-            $_SESSION["usuario_id"] = (string) $encontrado["_id"];  // Convertir el ObjectId a string
+            $_SESSION["usuario_id"] = (string) $encontrado["_id"];
             $_SESSION["usuario_nombre"] = $encontrado["nombre"];
             $_SESSION["rol"] = $encontrado["rol"];
-
-            // Recuperar el carrito guardado (si existe)
-            if (isset($_SESSION["carrito"])) {
-                $carrito_guardado = $_SESSION["carrito"];
-                $_SESSION['carrito'] = $carrito_guardado;
-            }
+        
+            // Recuperar el carrito guardado
+            $_SESSION["carrito"] = $encontrado["productos"] ?? [];
         } else {
             header("location:../html/login.html");
             exit;
@@ -150,34 +141,22 @@ if (isset($_SESSION["usuario_id"])) {
         <h3>TU CARRITO</h3>
         <a href="#"><i class='bx bx-x'></i></a>
     </section>
+
+
     <section class="subtiti">
         <h4>Producto</h4>
-        <h4>Total</h4>
+        <h4>Precio</h4>
     </section>
+
+
     <section class="listaCarrito">
-        <?php
-        // Mostrar los productos en el carrito
-        if (!empty($_SESSION["carrito"])) {
-            foreach ($_SESSION["carrito"] as $producto) {
-                echo "<div>{$producto['name']} - {$producto['quantity']} x \${$producto['price']}</div>";
-            }
-        } else {
-            echo "<p>El carrito está vacío.</p>";
-        }
-        ?>
+            
     </section>
+
     <section class="fin">
         <section class="upup">
             <h3>TOTAL</h3>
-            <p>
-                <?php
-                    $total = 0;
-                    foreach ($_SESSION["carrito"] as $producto) {
-                        $total += $producto['price'] * $producto['quantity'];
-                    }
-                    echo "$" . number_format($total, 2);
-                ?>
-            </p>
+            <p class="total"></p>
         </section>
         <section>
             <button>REALIZAR PEDIDO</button>
