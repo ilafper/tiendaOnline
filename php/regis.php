@@ -21,12 +21,10 @@ if (empty($nombre) || empty($password)) {
 
 // Verificar si el usuario ya existe
 $usuarioExistente = $collection->findOne(["nombre" => $nombre]);
-
 if ($usuarioExistente) {
     echo json_encode(["success" => false, "error" => "El usuario ya existe"]);
     exit;
 }
-
 
 // Crear nuevo usuario con array vacío en "productos"
 $nuevoUsuario = [

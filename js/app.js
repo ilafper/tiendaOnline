@@ -5,12 +5,14 @@ $(document).ready(function () {
             url: '../php/cargarProductos.php', // Ruta al archivo PHP
             method: 'GET',
             dataType: 'json', // Esperamos respuesta en formato JSON
+            
             success: function (data) {
                 if (data.success) {
                     const productosWrap = $('.ProductosWrap'); // Contenedor donde se mostrarán los productos
                     productosWrap.empty(); // Limpiar el contenido previo
 
-                    // Recorrer los productos y mostrarlos
+
+                    // Recorrer los productos y mostrarlos.
                     data.productos.forEach(function (producto) {
                         const productoHTML = `
                             <section class="card" data-codigo="${producto.codigo}">
@@ -101,10 +103,8 @@ $(document).ready(function () {
             let card = $(this).closest(".card");
             let productId = card.data("codigo");
             let nombre = card.find("h5").text();
-            let precio = parseFloat(card.find(".precio").text().replace("€", ""));
+            let precio = card.find(".precio").text().replace().trim();
             let imgSrc = card.find("img").attr("src");
-        
-            //console.log(productId);
             
             // Verificar si ya está en el carrito
             let itemExistente = $(".listaCarrito").find(`[data-codigo="${productId}"]`);
@@ -119,7 +119,7 @@ $(document).ready(function () {
                     url: '../php/actualizarCarrito.php',
                     method: 'POST',
                     data: {
-                        product_id: productId,
+                        codigo: productId,
                         cantidad: nuevaCantidad
                     },
                     success: function (response) {
@@ -139,7 +139,7 @@ $(document).ready(function () {
                         <section class="left d-flex flex-column w-100">
                             <section class="arriba">
                                 <p>${nombre}</p>
-                                <p>${precio}€</p>
+                                <p>${precio}€</p>  
                             </section>
                             <section class="abajo d-flex align-items-center gap-2">
                                 <section class="canti d-flex align-items-center gap-2">
@@ -156,7 +156,6 @@ $(document).ready(function () {
                 `;
         
                 $(".listaCarrito").append(itemCarrito);
-                console.log(productId);
                 
                 $.ajax({
                     url: '../php/actualizarCarrito.php',
@@ -164,11 +163,11 @@ $(document).ready(function () {
                     data: {
                         codigo: productId,
                         nombre: nombre,
-                        precio: precio,
+                        precio: precio, 
                         cantidad: 1,
                     },
                     success: function (response) {
-                        console.log(productId);
+                        console.log(response);
                     },
                     error: function (xhr, status, error) {
                         console.error("Error al agregar el producto:", error);
@@ -176,36 +175,34 @@ $(document).ready(function () {
                 });
             }
         });
-        
     
         // Aumentar cantidad
-
-
         $(document).on("click", ".bx-plus", function () {
             let cantidadInput = $(this).siblings(".cantidad-input");
             let nuevaCantidad = parseInt(cantidadInput.val()) + 1; // Aumenta en 1
             cantidadInput.val(nuevaCantidad);
-        
             let productId = $(this).closest(".item-carrito").data("codigo"); // Asegúrate de que se obtiene bien el ID
-        
+            let precio = $(this).closest(".item-carrito").find(".arriba p:nth-child(2)").text().trim();  // Obtener el precio del carrito
+    
             $.ajax({
                 url: '../php/actualizarCarrito.php',
                 method: 'POST',
                 data: { 
                     codigo: productId, 
-                    cantidad: nuevaCantidad  // Solo enviamos la cantidad nueva, no sumamos en el backend
+                    precio: precio,  // Asegúrate de enviar el precio tal cual
+                    cantidad: nuevaCantidad  // Solo enviamos la cantidad nueva
                 },
                 success: function (response) {
-                    console.log(response);
+                    
                 }
             });
         });
-        
+    
+        // Disminuir cantidad
         $(document).on("click", ".bx-minus", function () {
             let cantidadInput = $(this).siblings(".cantidad-input");
             let nuevaCantidad = Math.max(1, parseInt(cantidadInput.val()) - 1); // No permite valores menores a 1
             cantidadInput.val(nuevaCantidad);
-        
             let productId = $(this).closest(".item-carrito").data("codigo");
         
             $.ajax({
@@ -216,21 +213,20 @@ $(document).ready(function () {
                     cantidad: nuevaCantidad // Enviamos la cantidad nueva sin calcular en el backend
                 },
                 success: function (response) {
-                    console.log(response);
+                    
                 }
             });
         });
         
-    
-        // Eliminar producto
+        
         $(document).on("click", ".bx-trash", function () {
             let item = $(this).closest(".item-carrito");
             let productId = item.data("codigo");
-    
+        
             $.ajax({
-                url: '../php/eliminarCarrito.php',
+                url: '../php/eliminarProduct.php',
                 method: 'POST',
-                data: { product_id: productId },
+                data: { codigo: productId },
                 success: function (response) {
                     console.log(response);
                     item.remove();
@@ -238,10 +234,6 @@ $(document).ready(function () {
             });
         });
     });
-    
-
-
-
 
 
 

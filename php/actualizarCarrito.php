@@ -10,8 +10,8 @@ if (!isset($_SESSION["usuario_id"])) {
 $usuario_id = $_SESSION["usuario_id"];
 $codigo = $_POST["codigo"] ?? null;
 $nombre = $_POST["nombre"] ?? null;
-$precio = $_POST["precio"] ?? null;
-$cantidad = intval($_POST["cantidad"] ?? 1); // Convertir cantidad a entero
+$precio = floatval($_POST["precio"] ?? null); // Usamos floatval() para asegurar que el precio sea decimal
+$cantidad = intval($_POST["cantidad"] ?? 1);
 
 if (!$codigo) {
     echo json_encode(["success" => false, "error" => "Falta el ID del producto"]);
@@ -37,6 +37,7 @@ try {
     $encontrado = false;
     foreach ($productos as &$producto) {
         if ($producto["codigo"] == $codigo) {
+            $producto["precio"] = intval($precio);
             $producto["cantidad"] = intval($cantidad);
             $encontrado = true;
             break;
