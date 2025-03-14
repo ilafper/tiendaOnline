@@ -97,7 +97,18 @@ $(document).ready(function () {
     
     cargarCarrito();
     
+    function calcularTotal() {
+        let total = 0;
+        $('.item-carrito').each(function () {
+            let cantidad = parseInt($(this).find('.cantidad-input').val());
+            let precio = parseFloat($(this).find('.arriba p:nth-child(2)').text().trim().replace('€', ''));
+            total += cantidad * precio;
+        });
 
+        // Mostrar el total en el contenedor adecuado
+        $('.total').text(total.toFixed(2) + '€');
+    }
+    calcularTotal();
     $(document).ready(function () {
         $(document).on("click", ".añadir", function () {
             let card = $(this).closest(".card");
@@ -124,6 +135,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         console.log(response);
+                        calcularTotal()
                     },
                     error: function (xhr, status, error) {
                         console.error("Error al actualizar la cantidad:", error);
@@ -168,6 +180,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         console.log(response);
+                        calcularTotal()
                     },
                     error: function (xhr, status, error) {
                         console.error("Error al agregar el producto:", error);
@@ -193,7 +206,7 @@ $(document).ready(function () {
                     cantidad: nuevaCantidad  // Solo enviamos la cantidad nueva
                 },
                 success: function (response) {
-                    
+                    calcularTotal()
                 }
             });
         });
@@ -213,7 +226,7 @@ $(document).ready(function () {
                     cantidad: nuevaCantidad // Enviamos la cantidad nueva sin calcular en el backend
                 },
                 success: function (response) {
-                    
+                    calcularTotal()
                 }
             });
         });
