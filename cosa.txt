@@ -143,10 +143,10 @@ if (isset($_SESSION["usuario_id"])) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Nombre:</strong> <?php echo htmlspecialchars($_SESSION["usuario_nombre"]); ?></p>
-                <p><strong>Apellidos:</strong> <?php echo htmlspecialchars($_SESSION["apellidos"]); ?></p>
-                <p><strong>Correo:</strong> <?php echo htmlspecialchars($_SESSION["correo"]); ?></p>
-                <p><strong>Dirección:</strong> <?php echo htmlspecialchars($_SESSION["direccion"]); ?></p>
+                <p><strong>Nombre:</strong> <?php echo htmlspecialchars($_SESSION["usuario_nombre"] ?? 'No disponible'); ?></p>
+                <p><strong>Apellidos:</strong> <?php echo htmlspecialchars($_SESSION["apellidos"] ?? 'No disponible'); ?></p>
+                <p><strong>Correo:</strong> <?php echo htmlspecialchars($_SESSION["correo"] ?? 'No disponible'); ?></p>
+                <p><strong>Dirección:</strong> <?php echo htmlspecialchars($_SESSION["direccion"] ?? 'No disponible'); ?></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="boton-cerrar btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -155,6 +155,9 @@ if (isset($_SESSION["usuario_id"])) {
     </div>
 </div>
 
+
+
+<!-- Aquí se mostrará la lista de productos en el carrito -->
 <section id="carrito" class="carrito">
     <section class="titi">
         <h3>TU CARRITO</h3>
@@ -175,7 +178,7 @@ if (isset($_SESSION["usuario_id"])) {
     <section class="fin">
         <section class="upup">
             <h3>TOTAL</h3>
-            <p class="total">0</p>
+            <p class="total"></p>
         </section>
         <section>
             <button class="realizarPedido">REALIZAR PEDIDO</button>
@@ -188,6 +191,7 @@ if (isset($_SESSION["usuario_id"])) {
 <script src="../js/app.js"></script>
 </body>
 </html>
+
     <?php   
 } else {
     header("location:../html/login.html");

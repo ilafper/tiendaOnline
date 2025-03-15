@@ -41,6 +41,7 @@ body{
 }
 
 .icono-usuario {
+    text-decoration: none;
     font-size: 40px;  
     color: #002780; 
     margin-right: 8px;
@@ -56,6 +57,11 @@ body{
     gap: 5px;
 }
 
+.boton-cerrar{
+    background-color: #002780;
+    color: white;
+    border: none;
+}
 .nav-item .cerrar{
     text-decoration: none;
     background-color:#002780;
