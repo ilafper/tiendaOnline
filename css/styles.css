@@ -72,7 +72,7 @@ body{
     font-weight: bold;
 }
 
-.bx-cart {
+.bx-cart{
     font-size: 50px;  /* Tamaño del icono */
     color: #002780;  /* Color azul */
     margin-right: 8px;
@@ -80,6 +80,18 @@ body{
     border: none;
     cursor: pointer;
     transition: color 0.3s ease;
+}
+
+
+.rellenar{
+    text-decoration: none;
+    background-color:#002780;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: none;
 }
 
 /*PARTE DE PRODUCTOS*/
@@ -132,9 +144,41 @@ body{
     background-color: rgba(0, 0, 0, 0.884);
 }
 
+.cosa1{
+    margin-top: 5%;
+}
 
+.actualizar{
+    background-color: #002780;
+    color:white;
+    border: none;
+}
+
+.actualizar:hover{
+    background-color: #002780;
+    color:white;
+    border: none;
+}
+
+
+.actualizar:focus{
+    background-color: #002780;
+    color:white;
+    border: none;
+}
+
+.filaTabla td {
+    border: 1px solid black; /* Elimina los bordes de las celdas */
+}
+
+.nueva-cantidad{
+    border: 1px solid rgb(187, 187, 187);
+    border-radius: 5px;
+    padding: 4px;
+}
 /*FOOTER*/
 footer {
+    
     background-color: #002780;
     color: white;
     text-align: center;

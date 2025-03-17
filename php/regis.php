@@ -18,7 +18,6 @@ if (empty($nombre) || empty($password)) {
     echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios"]);
     exit;
 }
-
 // Verificar si el usuario ya existe
 $usuarioExistente = $collection->findOne(["nombre" => $nombre]);
 if ($usuarioExistente) {

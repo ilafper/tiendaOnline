@@ -8,7 +8,7 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.success) {
-                    const productosWrap = $('.ProductosWrap'); // Contenedor donde se mostrarán los productos
+                    const productosWrap = $('.ProductosWrap'); 
                     productosWrap.empty(); // Limpiar el contenido previo
 
 
@@ -169,6 +169,7 @@ $(document).ready(function () {
                     nombre: nombre,
                     precio: precio,
                     cantidad: 1,
+                    
                 },
                 success: function (response) {
                     console.log(response);
@@ -239,8 +240,7 @@ $(document).ready(function () {
             });
         });
 
-        
-        
+    
     });
     //parte deprocesar los pedidos cunado en el carrrito le das realizar pedido
     $(document).ready(function () {
@@ -252,10 +252,9 @@ $(document).ready(function () {
                 let cantidad = parseInt($(this).find(".cantidad-input").val().trim());
                 
                 carrito.push({ codigo, cantidad });
-                console.log(carrito);
+                //console.log(carrito);
             });
             
-           
             if (carrito.length === 0) {
                 alert("Tu carrito está vacío.");
                 return;
@@ -267,14 +266,152 @@ $(document).ready(function () {
                 type: "POST",
                 data: { carrito: carrito },
                 success: function (respuesta) {
-                    location.reload(); // Recargar la página después de un pedido exitoso
+                    location.reload(); // Recargar la página
                 },
                 error: function () {
-                    alert("Hubo un error al procesar el pedido.");
+                    //alert("Hubo un error al procesar el pedido.");
                 }
             });
         });
     });
+    //cargar productos para rellernar
 
+    function cargarProductos2() {
+        $.ajax({
+            url: '../php/cargarProductos.php', // Ruta al archivo PHP
+            method: 'GET',
+            dataType: 'json',
+    
+            success: function (data) {
+                if (data.success) {
+                    const ActuProductos = $('.restoProductos'); 
+                    ActuProductos.empty(); // Limpiar el contenido previo
+    
+                    // Recorrer los productos y mostrarlos.
+                    data.productos.forEach(function (producto) {
+                        // Crear una fila con los campos correspondientes para cada producto
+                        const productosRellenar = `
+                            <tr classs="filaTabla" data-codigo="${producto.codigo}">
+                                <td>${producto.codigo}</td>
+                                <td>${producto.nombre}</td>
+                                <td>${producto.stok}</td>
+                                <td><input type="number" class="nueva-cantidad" min="0" value="0"></td>
+                                <td><button class="btn actualizar">Actualizar</button></td>
+                            </tr>
+                        `;
+                        ActuProductos.append(productosRellenar); // Agregar la fila al contenedor
+                    });
+
+                    // Manejar clic en el botón de actualización
+                    $('.actualizar').on('click', function () {
+                        const fila = $(this).closest('tr');
+                        const codigo = fila.data('codigo');
+                        const nuevaCantidad = fila.find('.nueva-cantidad').val();
+
+                        if (nuevaCantidad > 0) {
+                            // Enviar la actualización del stock al servidor
+                            $.ajax({
+                                url: '../php/actualizarStock.php',
+                                method: 'POST',
+                                data: {
+                                    codigo: codigo,
+                                    cantidad: nuevaCantidad
+                                },
+                                success: function (response) {
+                                    //alert('okok');
+                                    cargarProductos2(); // Recargar los productos después de la actualización
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error al actualizar stock:', error);
+                                    //alert('nonono');
+                                }
+                            });
+                        } else {
+                            alert('Por favor ingresa una cantidad válida.');
+                        }
+                    });
+                } else {
+                    alert('Error al cargar los productos: ' + data.error);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', error);
+            }
+        });
+    }
+    
+
+    cargarProductos2();
+
+
+
+    //cargar PETICIONES DE COMPRA
+
+    function cargarPeticiones() {
+        $.ajax({
+            url: '../php/cargarPeticiones.php', // Ruta al archivo PHP
+            method: 'GET',
+            dataType: 'json',
+    
+            success: function (data) {
+                if (data.success) {
+                    const peticiones = $('.peticiones'); 
+                    ActuPeticiones.empty(); // Limpiar el contenido previo
+    
+                    // Recorrer los productos y mostrarlos.
+                    data.productos.forEach(function (producto) {
+                        // Crear una fila con los campos correspondientes para cada producto
+                        const peticionesRellenar = `
+                            <tr classs="filaTabla" data-codigo="${producto.codigo}">
+                                <td>${producto.codigo}</td>
+                                <td>${producto.nombre}</td>
+                                <td>${producto.stok}</td>
+                                <td><input type="number" class="nueva-cantidad" min="0" value="0"></td>
+                                <td><button class="btn actualizar">Actualizar</button></td>
+                            </tr>
+                        `;
+                        ActuPeticiones.append(peticionesRellenar); // Agregar la fila al contenedor
+                    });
+
+                    // Manejar clic en el botón de actualización
+                    $('.actualizar').on('click', function () {
+                        const fila = $(this).closest('tr');
+                        const codigo = fila.data('codigo');
+                        const nuevaCantidad = fila.find('.nueva-cantidad').val();
+
+                        if (nuevaCantidad > 0) {
+                            // Enviar la actualización del stock al servidor
+                            $.ajax({
+                                url: '../php/actualizarStock.php',
+                                method: 'POST',
+                                data: {
+                                    codigo: codigo,
+                                    cantidad: nuevaCantidad
+                                },
+                                success: function (response) {
+                                    //alert('okok');
+                                    cargarProductos2(); // Recargar los productos después de la actualización
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error al actualizar stock:', error);
+                                    //alert('nonono');
+                                }
+                            });
+                        } else {
+                            alert('Por favor ingresa una cantidad válida.');
+                        }
+                    });
+                } else {
+                    alert('Error al cargar los productos: ' + data.error);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', error);
+            }
+        });
+    }
+    
+
+    cargarPeticiones();
 
 });

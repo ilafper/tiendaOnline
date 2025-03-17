@@ -26,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["rol"] = $encontrado["rol"] ?? 'usuario'; // Guardamos el rol en la sesión
             $_SESSION["apellidos"] = $encontrado["apellidos"] ?? '';
             $_SESSION["correo"] = $encontrado["correo"] ?? '';
-            $_SESSION["direccion"] = $encontrado["direccion"] ?? '';
             $_SESSION["carrito"] = $encontrado["productos"] ?? [];
 
             // Redirigir si es admin
@@ -45,6 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
+
+
 // Si el usuario no es admin, mostrar directamente la página de home
 if (isset($_SESSION["usuario_id"])) {
     $usuario_nombre = $_SESSION["usuario_nombre"];
@@ -55,7 +56,7 @@ if (isset($_SESSION["usuario_id"])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home</title>
+        <title>Admin</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
         <link rel="stylesheet" href="../css/styles.css">
@@ -64,7 +65,7 @@ if (isset($_SESSION["usuario_id"])) {
     <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
         <div class="container-fluid">
             <section class="logo">
-                <a class="navbar-brand" href="login.php">
+                <a class="navbar-brand" href="admin.php">
                     <img src="../src/figura.png" alt="Logo del grupo" width="100" class="logito">
                 </a>
             </section>
@@ -86,30 +87,33 @@ if (isset($_SESSION["usuario_id"])) {
                         <a class="cerrar" href="cerrar.php">Cerrar sesión</a>
                     </li>
                     <li class="nav-item">
-                        <button id="open-cart-btn" class="nav-link" aria-label="Ver carrito">
-                            <a href="#carrito"><i class="bx bx-cart"></i></a>
-                        </button>
+                        <a class="rellenar" href="rellenar.php">Rellenar</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <section class="ProductosWrap">
-        <!-- Aqui los productos -->
+    <section class="cosa1">
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Código Producto</th>
+                        <th scope="col">Nombre Producto</th>
+                        <th scope="col">Stock Actual</th>
+                        <th scope="col">Nueva Cantidad</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                
+                <tbody class="restoProductos">
+                    
+                </tbody>
+            </table>
+        </div>
     </section>
 
-
-    
-    <footer>
-        <h4>&copy; 2025 VIVE MARK. Todos los derechos reservados.</h4>
-        <section class="redes">
-            <a href="https://www.facebook.com" target="_blank"><i class="bx bxl-facebook"></i></a>
-            <a href="https://www.twitter.com" target="_blank"><i class="bx bxl-twitter"></i></a>
-            <a href="https://www.instagram.com" target="_blank"><i class="bx bxl-instagram"></i></a>
-            <a href="https://www.youtube.com" target="_blank"><i class="bx bxl-youtube"></i></a>
-        </section>
-    </footer>
 
     <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -119,10 +123,10 @@ if (isset($_SESSION["usuario_id"])) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Usuario:</strong> <?php echo htmlspecialchars($_SESSION["usuario_nombre"]); ?></p>
-                    <p><strong>Apellidos:</strong> <?php echo htmlspecialchars($_SESSION["apellidos"] ?? ''); ?></p>
+                    <p><strong>Nombre:</strong> <?php echo htmlspecialchars($_SESSION["usuario_nombre"]); ?></p>
+                    <p><strong>Rol:</strong> <?php echo htmlspecialchars($_SESSION["rol"] ?? ''); ?></p>
                     <p><strong>Correo:</strong> <?php echo htmlspecialchars($_SESSION["correo"] ?? ''); ?></p>
-                    <p><strong>Dirección:</strong> <?php echo htmlspecialchars($_SESSION["direccion"] ?? ''); ?></p>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="boton-cerrar btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -131,30 +135,7 @@ if (isset($_SESSION["usuario_id"])) {
         </div>
     </div>
 
-    <section id="carrito" class="carrito">
-        <section class="titi">
-            <h3>TU CARRITO</h3>
-            <a href="#"><i class='bx bx-x'></i></a>
-        </section>
 
-        <section class="subtiti">
-            <h4>Producto</h4>
-            <h4>Precio</h4>
-        </section>
-
-        <section class="listaCarrito">
-        </section>
-
-        <section class="fin">
-            <section class="upup">
-                <h3>TOTAL</h3>
-                <p class="total">0</p>
-            </section>
-            <section>
-                <button class="realizarPedido">REALIZAR PEDIDO</button>
-            </section>
-        </section>
-    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

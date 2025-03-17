@@ -21,6 +21,21 @@ try {
     $client = new MongoDB\Client($uri);
     $db = $client->selectDatabase("Tienda");
     $productosCollection = $db->selectCollection("productos");
+    $loginCollection = $db->selectCollection("login");
+
+    // Obtener el usuario y comprobar si es un administrador
+    $admin = $loginCollection->findOne(["rol" => "admin"]);
+    $usuario_nombre = isset($_SESSION['usuario_nombre']) ? $_SESSION['usuario_nombre'] : null;
+
+    if (!$usuario_nombre) {
+        echo json_encode(["success" => false, "mensaje" => "Usuario no autenticado"]);
+        exit;
+    }
+
+    if (!$admin) {
+        echo json_encode(["success" => false, "mensaje" => "No se encontró administrador"]);
+        exit;
+    }
 
     // Procesar cada producto en el carrito
     foreach ($carrito as $item) {
@@ -41,15 +56,29 @@ try {
             exit;
         }
 
-        // Restar la cantidad del stock (corrigiendo la sintaxis)
+        // Restar la cantidad del stock
         $productosCollection->updateOne(
             ["codigo" => $codigo],
-            //operador de mongoDB PARA INCREMENTAR O DISMINUIR
             ['$inc' => ["cantidad_stock" => -$cantidad]]  // Decrementar el stock correctamente
         );
     }
 
+    // Crear la nueva petición
+    $nuevaPeticion = [
+        "nombre_usuario" => $usuario_nombre,
+        "carrito" => $carrito,
+        "estado" => "pendiente",
+
+    ];
+
+    // Agregar la nueva petición a la lista de peticiones del admin
+    $loginCollection->updateOne(
+        ["rol" => "admin"], // Buscar al admin
+        ['$push' => ["peticiones" => $nuevaPeticion]]  // Agregar la nueva petición al arreglo
+    );
+
     echo json_encode(["success" => true, "mensaje" => "Pedido realizado con éxito"]);
+
 } catch (Exception $e) {
     echo json_encode(["success" => false, "mensaje" => "Error del servidor: " . $e->getMessage()]);
 }
