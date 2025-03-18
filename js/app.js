@@ -422,7 +422,7 @@ $(document).ready(function () {
 
                             let cantidad = $(this).text().replace("Cantidad: ", "");
                             let codigo = $(this).closest('tr').find('.codigo').eq(index).text();
-                            productosPeti.push({ codigo: codigo, cantidad: parseInt(cantidad) });
+                            productosPeti.push({ codigo: codigo, cantidad: cantidad });
                              
 
                         });
