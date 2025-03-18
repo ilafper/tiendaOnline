@@ -100,7 +100,8 @@ if (isset($_SESSION["usuario_id"])) {
                 <thead>
                     <tr>
                         <th scope="col">Usuario que hace la peticion</th>
-                        <th scope="col">Productos</th>
+                        <th scope="col">Cod. Producto</th>
+                        <th scope="col">Cantidad Solicitada</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>

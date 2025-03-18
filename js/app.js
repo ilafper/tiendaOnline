@@ -11,7 +11,6 @@ $(document).ready(function () {
                     const productosWrap = $('.ProductosWrap');
                     productosWrap.empty(); // Limpiar el contenido previo
 
-
                     // Recorrer los productos y mostrarlos.
                     data.productos.forEach(function (producto) {
                         //  console.log(producto);
@@ -183,8 +182,8 @@ $(document).ready(function () {
 
         // Aumentar cantidad
         $(document).on("click", ".bx-plus", function () {
-            let cantidadInput = $(this).siblings(".cantidad-input");
-            let nuevaCantidad = parseInt(cantidadInput.val()) + 1; // Aumenta en 1
+            let cantidadInput = $(this).closest(".canti").find(".cantidad-input");
+            let nuevaCantidad = parseInt(cantidadInput.val()) + 1;
             cantidadInput.val(nuevaCantidad);
             let productId = $(this).closest(".item-carrito").data("codigo"); // Asegúrate de que se obtiene bien el ID
             let precio = $(this).closest(".item-carrito").find(".arriba p:nth-child(2)").text().trim();  // Obtener el precio del carrito
@@ -205,7 +204,7 @@ $(document).ready(function () {
 
         // Disminuir cantidad
         $(document).on("click", ".bx-minus", function () {
-            let cantidadInput = $(this).siblings(".cantidad-input");
+            let cantidadInput = $(this).closest(".canti").find(".cantidad-input");
             let nuevaCantidad = Math.max(1, parseInt(cantidadInput.val()) - 1); // No permite valores menores a 1
             cantidadInput.val(nuevaCantidad);
             let productId = $(this).closest(".item-carrito").data("codigo");
@@ -359,12 +358,16 @@ $(document).ready(function () {
 
                     // Recorrer las peticiones y mostrarlas.
                     data.peticiones.forEach(function (peticion) {
-                        let productosHTML = "";
+                        let productosHTML1 = "";
+                        let productosHTML2 = "";
 
                         // Recorrer los productos dentro del carrito
                         peticion.carrito.forEach(function (producto) {
-                            productosHTML += `
-                                <p>${producto.codigo} - Cantidad: ${producto.cantidad}</p>
+                            productosHTML1 += `
+                                <p class="codigo">${producto.codigo}</p>
+                            `;
+                            productosHTML2 += `
+                                <p class="cantidadPeti">Cantidad: ${producto.cantidad}</p>
                             `;
                         });
 
@@ -372,7 +375,8 @@ $(document).ready(function () {
                         const peticionHTML = `
                             <tr data-nombre="${peticion.nombre_usuario}">
                                 <td>${peticion.nombre_usuario}</td>
-                                <td>${productosHTML}</td>
+                                <td>${productosHTML1}</td>
+                                <td>${productosHTML2}</td>
                                 <td>
                                     <button class="btn btn-success aceptarPeti" data-id="${peticion.id}">Aceptar</button>
                                     <button class="btn btn-danger rechazarPeti" data-id="${peticion.id}">Rechazar</button>
@@ -406,8 +410,43 @@ $(document).ready(function () {
                                 //alert('nonono');
                             }
                         });
-
                     });
+
+
+                    $('.rechazarPeti').on('click', function () {
+                        let id = $(this).data('id');
+                        let productosPeti = []; // Para almacenar las cantidades de los productos
+                    
+                        // Encontrar todos los productos dentro de la petición
+                        $(this).closest('tr').find('.cantidadPeti').each(function (index) {
+
+                            let cantidad = $(this).text().replace("Cantidad: ", "");
+                            let codigo = $(this).closest('tr').find('.codigo').eq(index).text();
+                            productosPeti.push({ codigo: codigo, cantidad: parseInt(cantidad) });
+                             
+
+                        });
+                        console.log(productosPeti);
+                        
+                        $.ajax({
+                            url: '../php/rechazarPeti.php',
+                            method: 'POST',
+                            data: {
+                                codigo: id, 
+                                estado: "rechazada", 
+                                productos: productosPeti // Pasar el array de productos con sus cantidades
+                            },
+                            success: function (response) {
+                                alert('yesyes');
+                                cargarPeticiones(); // Recargar las peticiones después de la actualización
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error al actualizar stock:', error);
+                                alert('nonon');
+                            }
+                        });
+                    });
+                    
                 } else {
                     alert('Error al cargar las peticiones: ' + data.error);
                 }
