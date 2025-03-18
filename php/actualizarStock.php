@@ -17,7 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $db = $client->selectDatabase("Tienda");
         $productosCollection = $db->selectCollection("productos");
 
-        // Actualizar el stock del producto
+        // Actualizar el stock del producto.
+        
         $productosCollection->updateOne(
             ['codigo' => $codigo],
             ['$inc' => ['cantidad_stock' => (int)$cantidad]]

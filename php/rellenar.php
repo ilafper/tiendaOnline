@@ -103,7 +103,7 @@ if (isset($_SESSION["usuario_id"])) {
                         <th scope="col">Nombre Producto</th>
                         <th scope="col">Stock Actual</th>
                         <th scope="col">Nueva Cantidad</th>
-                        <th scope="col">Acción</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 

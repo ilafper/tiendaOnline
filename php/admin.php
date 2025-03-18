@@ -94,8 +94,22 @@ if (isset($_SESSION["usuario_id"])) {
         </div>
     </nav>
 
-    <section class="peticiones">
-        
+    <section class="cosa1">
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Usuario que hace la peticion</th>
+                        <th scope="col">Productos</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                
+                <tbody class="peticiones">
+                    
+                </tbody>
+            </table>
+        </div>
     </section>
 
 

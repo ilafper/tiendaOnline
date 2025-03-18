@@ -65,10 +65,10 @@ try {
 
     // Crear la nueva petición
     $nuevaPeticion = [
+        "id" => uniqid("peti_", true), // ID único para cada petición, prefijado con "peti_"
         "nombre_usuario" => $usuario_nombre,
         "carrito" => $carrito,
         "estado" => "pendiente",
-
     ];
 
     // Agregar la nueva petición a la lista de peticiones del admin
@@ -76,7 +76,11 @@ try {
         ["rol" => "admin"], // Buscar al admin
         ['$push' => ["peticiones" => $nuevaPeticion]]  // Agregar la nueva petición al arreglo
     );
-
+    // Vaciar el carrito del usuario
+    $loginCollection->updateOne(
+        ["nombre" => $usuario_nombre],  // Buscar al usuario que hizo el pedido
+        ['$set' => ["productos" => []]]  // Vaciar el carrito del usuario
+    );
     echo json_encode(["success" => true, "mensaje" => "Pedido realizado con éxito"]);
 
 } catch (Exception $e) {
